@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ECHOVERSE — Songs & Lyrics</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #0d0d0d; color: #e5e5e5; }
+    .line { white-space: pre-wrap; font-family: Consolas, monospace; }
+    .chord { font-weight: 700; margin-right: 4px; font-family: Consolas, monospace; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="sticky top-0 bg-black/70 backdrop-blur z-10 px-4 py-4 shadow">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <h1 class="text-2xl font-bold">ECHOVERSE</h1>
+      <input id="search" class="px-3 py-2 rounded bg-gray-800 border border-gray-700" placeholder="Search songs..." />
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    <div id="listView" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+
+    <div id="songView" class="hidden">
+      <button id="backBtn" class="mb-4 px-3 py-2 rounded bg-gray-800 border border-gray-700">← Back</button>
+      <article class="bg-gray-900 rounded-lg p-4 shadow">
+        <h2 id="songTitle" class="text-2xl font-bold mb-2"></h2>
+        <div id="lyricsArea" class="prose prose-invert text-gray-200"></div>
+      </article>
+    </div>
+  </main>
+
+  <script>
+    const listView = document.getElementById('listView');
+    const songView = document.getElementById('songView');
+    const backBtn = document.getElementById('backBtn');
+    const songTitle = document.getElementById('songTitle');
+    const lyricsArea = document.getElementById('lyricsArea');
+    const search = document.getElementById('search');
+
+    let songs = [];
+
+    async function loadSongs(){
+      try{
+        const resp = await fetch('songs/songs.json');
+        songs = await resp.json();
+        renderList();
+      } catch(e){ console.error('Song list load failed', e); }
+    }
+
+    function renderList(filter=''){   
+      listView.innerHTML = '';
+      const filtered = songs.filter(s=> s.title.toLowerCase().includes(filter.toLowerCase()));
+
+      if(filtered.length === 0){
+        listView.innerHTML = '<div class="text-center text-gray-500 col-span-full">No songs found.</div>';
+        return;
+      }
+
+      for(const s of filtered){
+        const card = document.createElement('button');
+        card.className = "p-4 text-left bg-gray-800 rounded shadow hover:bg-gray-700 transition";
+        card.innerHTML = `<h3 class='text-lg font-semibold'>${s.title}</h3>`;
+        card.addEventListener('click', ()=> openSong(s));
+        listView.appendChild(card);
+      }
+    }
+
+    async function openSong(song){
+      listView.classList.add('hidden');
+      songView.classList.remove('hidden');
+      songTitle.textContent = song.title;
+
+      try{
+        const resp = await fetch(`songs/${song.file}`);
+        const text = await resp.text();
+        renderLyrics(text);
+      } catch(e){ lyricsArea.textContent = 'Failed to load song.'; }
+    }
+
+    function renderLyrics(text){
+      lyricsArea.innerHTML = '';
+      const lines = text.split('\n');
+      for(const ln of lines){
+        const div = document.createElement('div');
+        div.className = 'line mb-1';
+        const parts = ln.split(/(\[[^\]]+\])/g);
+
+        for(const p of parts){
+          if(/^\[[^\]]+\]$/.test(p)){
+            const span = document.createElement('span');
+            span.className = 'chord text-pink-400';
+            span.textContent = p.replace(/\[|\]/g,'');
+            div.appendChild(span);
+          } else div.appendChild(document.createTextNode(p));
+        }
+        lyricsArea.appendChild(div);
+      }
+    }
+
+    backBtn.addEventListener('click', ()=>{
+      songView.classList.add('hidden');
+      listView.classList.remove('hidden');
+    });
+
+    search.addEventListener('input', (e)=> renderList(e.target.value));
+
+    loadSongs();
+  </script>
+</body>
+</html>
