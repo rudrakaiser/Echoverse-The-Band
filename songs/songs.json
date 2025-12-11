@@ -1,3 +1,7 @@
 [
-  { "title": "Indalo 1996", "file": "Indalo 1996.txt" }
+  {
+    "title": "Indalo 1996",
+    "file": "Indalo 1996.txt",
+    "tutorial": "https://youtu.be/FSdijcfMFEM"
+  }
 ]

@@ -1,7 +1,9 @@
+Tempo 130 bpm
+
 [Intro]
-C  C  F  C  C / G
-C  C  F  C  C / G
-C  C  F  C  C / G
+C     F   C    C / G
+C     F   C    C / G
+C     F   C    C / G   C
  
 [Verse 1]
 C
