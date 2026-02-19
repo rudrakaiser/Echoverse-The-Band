@@ -1,119 +1,146 @@
-<!doctype html>
-<html lang="bn">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ECHOVERSE — Songs & Lyrics</title>
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECHOVERSE</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { background: #0d0d0d; color: #e5e5e5; }
-    .line { white-space: pre-wrap; font-family: Consolas, monospace; }
-    .chord { font-weight: 700; margin-right: 4px; font-family: Consolas, monospace; }
-  </style>
-</head>
-<body class="min-h-screen">
-  <header class="sticky top-0 bg-black/70 backdrop-blur z-10 px-4 py-4 shadow">
-    <div class="max-w-4xl mx-auto flex items-center justify-between">
-      <h1 class="text-2xl font-bold">ECHOVERSE | Guitar Chords</h1>
-    </div>
-  </header>
-
-  <main class="max-w-4xl mx-auto px-4 py-6">
-    <div id="listView" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-
-    <div id="songView" class="hidden">
-      <button id="backBtn" class="mb-4 px-3 py-2 rounded bg-gray-800 border border-gray-700">← Back</button>
-      <article class="bg-gray-900 rounded-lg p-4 shadow">
-        <h2 id="songTitle" class="text-2xl font-bold mb-2" translate="no"></h2>
-        <div id="lyricsArea" class="prose prose-invert text-gray-200 font-mono"></div>
-        <div id="tutorialButtonContainer" class="mt-4"></div>
-      </article>
-    </div>
-  </main>
 
   <script>
-    const listView = document.getElementById('listView');
-    const songView = document.getElementById('songView');
-    const backBtn = document.getElementById('backBtn');
-    const songTitle = document.getElementById('songTitle');
-    const lyricsArea = document.getElementById('lyricsArea');
-    const tutorialButtonContainer = document.getElementById('tutorialButtonContainer');
-
-    let songs = [];
-
-    async function loadSongs(){
-      try{
-        const resp = await fetch('songs/songs.json');
-        songs = await resp.json();
-        renderList();
-      } catch(e){ console.error('Song list load failed', e); }
-    }
-
-    function renderList(){   
-      listView.innerHTML = '';
-      if(songs.length === 0){
-        listView.innerHTML = '<div class="text-center text-gray-500 col-span-full">No songs found.</div>';
-        return;
-      }
-
-      for(const s of songs){
-        const card = document.createElement('button');
-        card.className = "p-4 text-left bg-gray-800 rounded shadow hover:bg-gray-700 transition";
-        card.innerHTML = `<h3 class='text-lg font-semibold'>${s.title}</h3>`;
-        card.addEventListener('click', ()=> openSong(s));
-        listView.appendChild(card);
-      }
-    }
-
-    async function openSong(song){
-      listView.classList.add('hidden');
-      songView.classList.remove('hidden');
-      songTitle.textContent = song.title;
-
-      try{
-        const resp = await fetch(`songs/${song.file}`);
-        const text = await resp.text();
-        renderLyrics(text);
-
-        tutorialButtonContainer.innerHTML = '';
-        if(song.tutorial){
-          const btn = document.createElement('a');
-          btn.href = song.tutorial;
-          btn.target = '_blank';
-          btn.className = 'px-4 py-2 bg-pink-600 rounded shadow hover:bg-pink-500 transition';
-          btn.textContent = 'Tutorial';
-          tutorialButtonContainer.appendChild(btn);
-        }
-
-      } catch(e){ lyricsArea.textContent = 'Failed to load song.'; }
-    }
-
-    function renderLyrics(text){
-      lyricsArea.innerHTML = '';
-      const lines = text.split('\n');
-      for(const ln of lines){
-        const div = document.createElement('div');
-        div.className = 'line mb-1';
-        const parts = ln.split(/(\[[^\]]+\])/g);
-        for(const p of parts){
-          if(/^\[[^\]]+\]$/.test(p)){
-            const span = document.createElement('span');
-            span.className = 'chord text-pink-400';
-            span.textContent = p.replace(/\[|\]/g,'');
-            div.appendChild(span);
-          } else div.appendChild(document.createTextNode(p));
-        }
-        lyricsArea.appendChild(div);
-      }
-    }
-
-    backBtn.addEventListener('click', ()=>{
-      songView.classList.add('hidden');
-      listView.classList.remove('hidden');
-    });
-
-    loadSongs();
+    tailwind.config = {
+      theme: {
+        extend: {
+          keyframes: {
+            rock: {
+              '0%,100%': { transform: 'rotate(-2deg) scale(0.75)' },
+              '50%': { transform: 'rotate(2deg) scale(0.8)' },
+            },
+            glow: {
+              '0%,100%': { textShadow: '0 0 20px #e11d48' },
+              '50%': { textShadow: '0 0 60px #fb7185' },
+            },
+          },
+          animation: {
+            rock: 'rock 3s ease-in-out infinite',
+            glow: 'glow 2.5s ease-in-out infinite',
+          },
+        },
+      },
+    };
   </script>
+
+  <style>
+    .glass {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+
+<body class="bg-black text-white overflow-x-hidden">
+
+  <!-- ============ FIXED ECHOVERSE ============ -->
+  <div class="fixed inset-0 flex items-center justify-center z-10 pointer-events-none">
+    <h1
+      class="text-[20vw] md:text-[16vw] font-extrabold text-transparent bg-clip-text
+             bg-gradient-to-r from-red-500 via-pink-500 to-red-600
+             animate-rock animate-glow tracking-widest select-none">
+      ECHOVERSE
+    </h1>
+  </div>
+
+  <!-- ============ SCROLL SPACE ============ -->
+<section class="relative z-20 h-[450vh] flex flex-col items-center pt-[100vh] space-y-[25vh]">
+
+  <!-- Card Template -->
+  <!-- Vocal -->
+  <div class="glass bg-white/10 w-[95%] max-w-5xl rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
+    
+    <!-- Image Left -->
+    <div class="flex-shrink-0">
+      <img src="assets/dipta.jpg" 
+           class="w-48 h-48 md:w-60 md:h-60 object-cover rounded-2xl shadow-xl border border-white/20">
+    </div>
+
+    <!-- Text Right -->
+    <div class="text-center md:text-left">
+      <h2 class="text-4xl md:text-5xl font-extrabold tracking-wide">Dipta Banik</h2>
+      <p class="text-red-500 text-xl md:text-2xl font-semibold mt-2">Vocal</p>
+      <p class="text-gray-300 mt-4 text-lg md:text-xl leading-relaxed max-w-xl">
+        Voice of emotion, stories, and raw expression.
+      </p>
+    </div>
+  </div>
+
+  <!-- Lead Guitarist -->
+  <div class="glass bg-white/10 w-[95%] max-w-5xl rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
+    <div class="flex-shrink-0">
+      <img src="assets/rudra.jpeg" 
+           class="w-48 h-48 md:w-60 md:h-60 object-cover rounded-2xl shadow-xl border border-white/20">
+    </div>
+
+    <div class="text-center md:text-left">
+      <h2 class="text-4xl md:text-5xl font-extrabold tracking-wide">Rudra Kaiser</h2>
+      <p class="text-red-500 text-xl md:text-2xl font-semibold mt-2">Lead Guitarist</p>
+      <p class="text-gray-300 mt-4 text-lg md:text-xl leading-relaxed max-w-xl">
+        Emotion-driven lead guitarist shaping Echoverse’s sound.
+      </p>
+    </div>
+  </div>
+
+  <!-- Riff Guitarist -->
+  <div class="glass bg-white/10 w-[95%] max-w-5xl rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
+    <div class="flex-shrink-0">
+      <img src="assets/niloy.jpeg" 
+           class="w-48 h-48 md:w-60 md:h-60 object-cover rounded-2xl shadow-xl border border-white/20">
+    </div>
+
+    <div class="text-center md:text-left">
+      <h2 class="text-4xl md:text-5xl font-extrabold tracking-wide">Niloy Sen</h2>
+      <p class="text-red-500 text-xl md:text-2xl font-semibold mt-2">Riff Guitarist</p>
+      <p class="text-gray-300 mt-4 text-lg md:text-xl leading-relaxed max-w-xl">
+        Heavy riffs and rhythmic backbone of the band.
+      </p>
+    </div>
+  </div>
+
+  <!-- Bassist -->
+  <div class="glass bg-white/10 w-[95%] max-w-5xl rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
+    <div class="flex-shrink-0">
+      <img src="assets/abhro.jpg" 
+           class="w-48 h-48 md:w-60 md:h-60 object-cover rounded-2xl shadow-xl border border-white/20">
+    </div>
+
+    <div class="text-center md:text-left">
+      <h2 class="text-4xl md:text-5xl font-extrabold tracking-wide">Abhra Nil Barua</h2>
+      <p class="text-red-500 text-xl md:text-2xl font-semibold mt-2">Bassist</p>
+      <p class="text-gray-300 mt-4 text-lg md:text-xl leading-relaxed max-w-xl">
+        Groove keeper holding rhythm and harmony.
+      </p>
+    </div>
+  </div>
+
+  <!-- Drummer -->
+  <div class="glass bg-white/10 w-[95%] max-w-5xl rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 mb-[80vh]">
+    <div class="flex-shrink-0">
+      <img src="assets/rifat.jpg" 
+           class="w-48 h-48 md:w-60 md:h-60 object-cover rounded-2xl shadow-xl border border-white/20">
+    </div>
+
+    <div class="text-center md:text-left">
+      <h2 class="text-4xl md:text-5xl font-extrabold tracking-wide">Rafiul Rifat</h2>
+      <p class="text-red-500 text-xl md:text-2xl font-semibold mt-2">Drummer</p>
+      <p class="text-gray-300 mt-4 text-lg md:text-xl leading-relaxed max-w-xl">
+        Power, pulse and precision behind Echoverse.
+      </p>
+    </div>
+  </div>
+
+</section>
+
 </body>
 </html>
