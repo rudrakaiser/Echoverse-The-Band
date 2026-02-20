@@ -44,17 +44,40 @@
 <body class="bg-black text-white overflow-x-hidden">
 
   <!-- ============ FIXED ECHOVERSE ============ -->
-  <div class="fixed inset-0 flex items-center justify-center z-10 pointer-events-none">
+  <!-- <div class="fixed inset-0 flex items-center justify-center z-10 pointer-events-none">
     <h1
       class="text-[20vw] md:text-[16vw] font-extrabold text-transparent bg-clip-text
              bg-gradient-to-r from-red-500 via-pink-500 to-red-600
              animate-rock animate-glow tracking-widest select-none">
       ECHOVERSE
     </h1>
-  </div>
+  </div> -->
+
+  <!-- ============ FIXED BACKGROUND LOGO ============ -->
+<div class="fixed inset-0 z-0 overflow-hidden">
+  <div class="absolute inset-0 bg-black/60"></div>
+
+  <img 
+    src="assets/ECHO.png" 
+    alt="ECHOVERSE LOGO"
+    class="w-full h-full object-contain opacity-20 animate-logo"
+  >
+</div>
+
+<style>
+@keyframes logoFloat {
+  0%   { transform: scale(1) translateY(0px); }
+  50%  { transform: scale(1.05) translateY(-10px); }
+  100% { transform: scale(1) translateY(0px); }
+}
+
+.animate-logo {
+  animation: logoFloat 12s ease-in-out infinite;
+}
+</style>
 
   <!-- ============ SCROLL SPACE ============ -->
-<section class="relative z-20 h-[450vh] flex flex-col items-center pt-[100vh] space-y-[25vh]">
+<section class="relative z-20 h-[520vh] flex flex-col items-center pt-[100vh] space-y-[25vh]">
 
   <!-- Card Template -->
   <!-- Vocal -->
@@ -79,7 +102,7 @@
   <!-- Lead Guitarist -->
   <div class="glass bg-white/10 w-[95%] max-w-5xl rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
     <div class="flex-shrink-0">
-      <img src="assets/rudra.jpeg" 
+      <img src="assets/rudra.png" 
            class="w-48 h-48 md:w-60 md:h-60 object-cover rounded-2xl shadow-xl border border-white/20">
     </div>
 
@@ -139,6 +162,22 @@
       </p>
     </div>
   </div>
+
+  <!-- Manager -->
+<div class="glass bg-white/10 w-[95%] max-w-5xl rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
+  <div class="flex-shrink-0">
+    <img src="assets/reza.jpeg" 
+         class="w-48 h-48 md:w-60 md:h-60 object-cover rounded-2xl shadow-xl border border-white/20">
+  </div>
+
+  <div class="text-center md:text-left">
+    <h2 class="text-4xl md:text-5xl font-extrabold tracking-wide">Ahammed Reza Rahim</h2>
+    <p class="text-red-500 text-xl md:text-2xl font-semibold mt-2">Band Manager</p>
+    <p class="text-gray-300 mt-4 text-lg md:text-xl leading-relaxed max-w-xl">
+      Managing chaos, shaping sound, building the future of Echoverse.
+    </p>
+  </div>
+</div>
 
 </section>
 
